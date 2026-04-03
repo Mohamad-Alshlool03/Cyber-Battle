@@ -1,0 +1,24 @@
+{
+  "phase": "DEFENSE",
+  "vulnerabilities": 3,
+  "teamA": {
+    "network": {
+      "ssid": "TeamA_WiFi",
+      "password": "A1234"
+    },
+    "score": {
+      "attack": 16,
+      "defense": 6
+    }
+  },
+  "teamB": {
+    "network": {
+      "ssid": "TeamB_WiFi",
+      "password": "B1234"
+    },
+    "score": {
+      "attack": 4,
+      "defense": 7
+    }
+  }
+}

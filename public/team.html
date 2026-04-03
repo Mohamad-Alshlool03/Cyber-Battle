@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Select Team</title>
+</head>
+<body>
+
+<h2>Select Your Team</h2>
+
+<button onclick="selectTeam('teamA')">Team A</button>
+<button onclick="selectTeam('teamB')">Team B</button>
+
+<script>
+function selectTeam(team) {
+    localStorage.setItem("team", team);
+    localStorage.setItem("role", "defense"); // أو attack حسب اختيارك
+    window.location.href = "defense.html";
+}
+</script>
+
+</body>
+</html>

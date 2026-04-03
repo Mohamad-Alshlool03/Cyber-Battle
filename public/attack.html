@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Attack Mode - Windows</title>
+
+<style>
+body {
+  margin: 0;
+  background: url("https://wallpaperaccess.com/full/317501.jpg") no-repeat center center fixed;
+  background-size: cover;
+  font-family: Segoe UI, Arial;
+  color: white;
+}
+
+/* TASKBAR */
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+  background: rgba(20,20,20,0.9);
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  gap: 10px;
+}
+
+/* DESKTOP ICONS */
+.desktop {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 100px);
+  gap: 25px;
+}
+
+.icon {
+  text-align: center;
+  cursor: pointer;
+}
+
+.icon img {
+  width: 64px;
+  height: 64px;
+}
+
+.icon span {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+/* BUTTONS */
+.attack-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.switch-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* WINDOW */
+.window {
+  width: 380px;
+  background: #020617;
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  display: none;
+  box-shadow: 0 0 25px rgba(255,0,0,0.5);
+}
+
+.window h3 {
+  margin-top: 0;
+  color: #f87171;
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  background: black;
+  color: #22c55e;
+  border: 1px solid #334155;
+}
+
+button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #ef4444;
+  color: white;
+}
+</style>
+</head>
+
+<body>
+
+<!-- DESKTOP -->
+<div class="desktop">
+
+  <!-- Wireshark -->
+  <div class="icon" onclick="openTool('Wireshark')">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Wireshark_icon.svg">
+    <span>Wireshark</span>
+  </div>
+
+  <!-- Metasploit -->
+  <div class="icon" onclick="openTool('Metasploit')">
+    <img src="https://www.kali.org/tools/metasploit-framework/images/metasploit-framework-logo.svg">
+    <span>Metasploit</span>
+  </div>
+
+  <!-- Burp -->
+  <div class="icon" onclick="openTool('Burp Suite')">
+    <img src="images/tools/Burp Suite.png">
+    <span>Burp Suite</span>
+  </div>
+  
+    
+  <!-- Nmap -->
+  <div class="icon" onclick="openTool('Nmap')">
+    <img src="https://nmap.org/images/nmap-logo-256x256.png">
+    <span>Nmap</span>
+  </div>
+
+</div>
+
+<!-- ATTACK WINDOW -->
+<div id="attackWindow" class="window">
+
+  <h3>Target Network</h3>
+
+  <label>Target Team</label>
+  <input type="text" id="targetTeam" disabled>
+
+  <label>Network Name</label>
+  <input type="text" value="WiFi_B" disabled>
+
+  <label>Password</label>
+  <input type="password" id="enemyPass" value="Def">
+
+  <button onclick="revealPassword()">Reveal Password</button>
+
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+
+  <button class="attack-btn" onclick="openAttack()">
+    ⚙️ Settings
+  </button>
+
+  <button class="switch-btn" onclick="switchToDefense()">
+    🛡️ Switch to Defense
+  </button>
+
+  <button onclick="viewScoreboard()">
+    📊 Score
+  </button>
+
+</div>
+
+<script>
+
+const myTeam = localStorage.getItem("team");
+const enemyTeam = myTeam === "A" ? "B" : "A";
+
+document.getElementById("targetTeam").value =
+  "Team " + enemyTeam;
+
+function openAttack() {
+  document.getElementById("attackWindow").style.display = "block";
+}
+
+/* TOOLS */
+function openTool(tool) {
+  alert(tool + " Launched 🚀");
+}
+
+/* NAVIGATION */
+function viewScoreboard() {
+  window.location.href = "score.html";
+}
+
+function switchToDefense() {
+  window.location.href = "defense.html";
+}
+
+/* ATTACK */
+function revealPassword() {
+
+  const team =
+    localStorage.getItem("team") === "A" ? "teamA" : "teamB";
+
+  const password =
+    document.getElementById("enemyPass").value;
+
+  fetch('/api/attack', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      team: team,
+      password: password
+    })
+  })
+
+  .then(res => res.json())
+
+  .then(data => {
+    alert(data.message);
+  });
+}
+
+</script>
+
+</body>
+</html>

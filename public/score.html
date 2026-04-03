@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Scoreboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #00ffea;
+            text-shadow: 0 0 10px #00ffea, 0 0 20px #00ffea, 0 0 30px #00ffea;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px #00ffea, 0 0 10px #00ffea; }
+            100% { text-shadow: 0 0 20px #00ffea, 0 0 40px #00ffea, 0 0 60px #00ffea; }
+        }
+
+        .scoreboard-container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 40px;
+        }
+
+        .team-card {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid;
+            transition: transform 0.3s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-a {
+            border-color: #3b82f6;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .team-b {
+            border-color: #ef4444;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid;
+        }
+
+        .team-a .team-header {
+            border-color: #3b82f6;
+        }
+
+        .team-b .team-header {
+            border-color: #ef4444;
+        }
+
+        .team-name {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .team-a .team-name {
+            color: #ffffff;
+        }
+
+        .team-b .team-name {
+            color: #ffffff;
+        }
+
+        .total-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .score-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .score-item {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .attack-score {
+            color: #ef4444;
+        }
+
+        .defense-score {
+            color: #3b82f6;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00ffea, #00b8a9);
+            color: #0f172a;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .live-badge {
+            display: inline-block;
+            background: #ef4444;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .last-updated {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ffea;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: float 5s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); }
+            100% { transform: translateY(-100px) translateX(100px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 CYBERSECURITY SCOREBOARD <span class="live-badge">LIVE</span></h1>
+        <div class="last-updated" id="lastUpdated">Last updated: --:--:--</div>
+    </div>
+
+    <div class="scoreboard-container">
+        <!-- Team A Card -->
+        <div class="team-card team-a">
+            <div class="team-header">
+                <div class="team-name">🔵 TEAM - A </div>
+                <div class="total-score" id="teamATotal">2</div>
+            </div>
+            <div class="score-details">
+                <div class="score-item">
+                    <div class="score-label">⚔️ ATTACK</div>
+                    <div class="score-value attack-score" id="teamAAttack">2</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">🛡️ DEFENSE</div>
+                    <div class="score-value defense-score" id="teamADefense">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team B Card -->
+        <div class="team-card team-b">
+            <div class="team-header">
+                <div class="team-name">🔴 TEAM - B </div>
+                <div class="total-score" id="teamBTotal">3</div>
+            </div>
+            <div class="score-details">
+                <div class="score-item">
+                    <div class="score-label">⚔️ ATTACK</div>
+                    <div class="score-value attack-score" id="teamBAttack">1</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">🛡️ DEFENSE</div>
+                    <div class="score-value defense-score" id="teamBDefense">2</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-primary" onclick="refreshScores()">🔄 Refresh Scores</button>
+        <button class="btn btn-secondary" onclick="goToGame()">🎮 Back to Game</button>
+        <button class="btn btn-danger" onclick="resetGame()">🔄 Reset Game</button>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="floating-particles" id="particles"></div>
+
+    <script>
+        // إنشاء الجسيمات
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.animationDuration = (3 + Math.random() * 5) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // جلب النتائج
+        async function fetchScores() {
+            try {
+                const response = await fetch('/api/scores');
+                const data = await response.json();
+                
+                if (data && data.teamA && data.teamB) {
+                    // تحديث نتائج الفريق A
+                    document.getElementById('teamAAttack').textContent = data.teamA.attack;
+                    document.getElementById('teamADefense').textContent = data.teamA.defense;
+                    document.getElementById('teamATotal').textContent = data.totalTeamA || (data.teamA.attack + data.teamA.defense);
+                    
+                    // تحديث نتائج الفريق B
+                    document.getElementById('teamBAttack').textContent = data.teamB.attack;
+                    document.getElementById('teamBDefense').textContent = data.teamB.defense;
+                    document.getElementById('teamBTotal').textContent = data.totalTeamB || (data.teamB.attack + data.teamB.defense);
+                    
+                    // تحديث وقت التحديث الأخير
+                    const now = new Date();
+                    document.getElementById('lastUpdated').textContent = 
+                        `Last updated: ${now.toLocaleTimeString()}`;
+                }
+            } catch (error) {
+                console.error('Error fetching scores:', error);
+            }
+        }
+
+        // تحديث النتائج
+        function refreshScores() {
+            fetchScores();
+        }
+
+        // العودة للعبة
+        function goToGame() {
+            window.location.href = 'game.html';
+        }
+
+        // إعادة تعيين اللعبة
+        async function resetGame() {
+            if (confirm('Are you sure you want to reset the game? All scores will be lost!')) {
+                try {
+                    const response = await fetch('/api/game/reset', {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('Game reset successfully!');
+                        fetchScores();
+                    }
+                } catch (error) {
+                    console.error('Error resetting game:', error);
+                }
+            }
+        }
+
+        // التحديث التلقائي كل 5 ثواني
+        setInterval(fetchScores, 5000);
+
+        // التهيئة
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            fetchScores();
+        });
+    </script>
+</body>
+</html>

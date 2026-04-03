@@ -1,0 +1,27 @@
+{
+  "name": "cyber-game",
+  "version": "1.0.0",
+  "description": "Cybersecurity Red Team vs Blue Team Web Game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "keywords": [
+    "cybersecurity",
+    "game",
+    "red-team",
+    "blue-team",
+    "hacking",
+    "defense"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

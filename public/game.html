@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Body & Background ===== */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* ===== Glowing Titles ===== */
+    h1, h2 {
+      text-shadow: 0 0 10px #00ffea, 0 0 20px #00ffea;
+      animation: glow 2s infinite alternate;
+    }
+
+    h1 { font-size: 3rem; margin-bottom: 30px; color: #ff00ff; }
+    h2 { font-size: 2.5rem; margin-bottom: 20px; color: #00ffea; }
+
+    @keyframes glow {
+      0% { text-shadow: 0 0 5px #00ffea, 0 0 10px #00ffea; }
+      100% { text-shadow: 0 0 20px #00ffea, 0 0 40px #00ffea, 0 0 60px #00ffea; }
+    }
+
+    /* ===== Buttons ===== */
+    button {
+      padding: 15px 35px;
+      margin: 10px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+      box-shadow: 0 0 10px #fff;
+      color: white;
+    }
+
+    /* Team Buttons */
+    .teamA { background: linear-gradient(45deg, #38bdf8, #0ea5e9); box-shadow: 0 0 15px #38bdf8; }
+    .teamB { background: linear-gradient(45deg, #f472b6, #f43f5e); box-shadow: 0 0 15px #f472b6; }
+
+    /* Role Buttons */
+    .attack { background: linear-gradient(45deg, #ef4444, #b91c1c); box-shadow: 0 0 15px #ef4444; }
+    .defense { background: linear-gradient(45deg, #3b82f6, #1e40af); box-shadow: 0 0 15px #3b82f6; }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #fff, 0 0 40px currentColor;
+    }
+
+    /* ===== Subtext ===== */
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #a0a0a0;
+    }
+
+    /* ===== Floating Particles ===== */
+    .particle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #00ffea;
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: float 5s linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); }
+      100% { transform: translateY(-100vh) translateX(50px); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎮 Choose Your Team</h1>
+
+  <div id="teamSection">
+    <button class="teamA" onclick="chooseTeam('A')">Team A</button>
+    <button class="teamB" onclick="chooseTeam('B')">Team B</button>
+  </div>
+
+  <div id="roleSection" style="display:none;">
+    <h2 id="teamTitle"></h2>
+    <p>Choose your role:</p>
+    <button class="attack" onclick="chooseRole('attack')">⚔️ Attack</button>
+    <button class="defense" onclick="chooseRole('defense')">🛡️ Defense</button>
+  </div>
+
+  <script>
+    // ===== Floating Particles =====
+    for (let i = 0; i < 50; i++) {
+      let particle = document.createElement('div');
+      particle.classList.add('particle');
+      particle.style.left = Math.random() * window.innerWidth + 'px';
+      particle.style.top = Math.random() * window.innerHeight + 'px';
+      particle.style.animationDuration = 3 + Math.random() * 5 + 's';
+      document.body.appendChild(particle);
+    }
+
+    // ===== Team Selection =====
+    function chooseTeam(team) {
+      localStorage.setItem("team", team);
+      document.getElementById("teamSection").style.display = "none";
+      document.getElementById("roleSection").style.display = "block";
+      document.getElementById("teamTitle").innerText = "You are in Team " + team;
+    }
+
+    function chooseRole(role) {
+      localStorage.setItem("role", role);
+      if (role === "attack") {
+        window.location.href = "attack.html";
+      } else {
+        window.location.href = "defense.html";
+      }
+    }
+  </script>
+</body>
+</html>

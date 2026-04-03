@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Defense Mode - Windows</title>
+<style>
+body {
+    margin: 0;
+    background: url("https://wallpaperaccess.com/full/317501.jpg") no-repeat center center fixed;
+    background-size: cover;
+    font-family: Segoe UI, Arial;
+    color: white;
+    min-height: 100vh;
+    cursor: default;
+}
+
+/* TASKBAR */
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background: rgba(20,20,20,0.95);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 10px;
+    z-index: 100;
+}
+
+.taskbar button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.taskbar button:hover {
+    transform: scale(1.05);
+}
+
+.switch-btn {
+    background: linear-gradient(45deg,#f50b0b,#d90606)!important;
+}
+
+#timer {
+    font-weight: bold;
+    color: #facc15;
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+}
+
+#taskbarTeam {
+    margin-left: auto;
+    font-weight: bold;
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+}
+
+/* WINDOW */
+.window {
+    width: 400px;
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    border: 1px solid #374151;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.window.active {
+    display: block;
+}
+
+.window h3 {
+    color: #60a5fa;
+    border-bottom: 2px solid #3b82f6;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.form-group {
+    margin-top: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #cbd5e1;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    background: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 15px;
+    transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+.status-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    display: none;
+}
+
+.success {
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid #16a34a;
+    color: #4ade80;
+    display: block;
+}
+
+.error {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid #dc2626;
+    color: #f87171;
+    display: block;
+}
+
+/* Menu items */
+.menu-item {
+    padding: 12px;
+    background: #374151;
+    border-radius: 6px;
+    margin: 8px 0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.menu-item:hover {
+    background: #4b5563;
+    transform: translateX(5px);
+}
+
+/* Overlay for background when window is open */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- Overlay for closing windows -->
+<div class="overlay" id="overlay" onclick="closeAllWindows()"></div>
+
+<!-- WINDOW 1 -->
+<div id="networkWindow" class="window">
+    <h3>Network Settings</h3>
+    <div class="menu-item" onclick="openInternet()">
+        🌐 Internet Settings
+    </div>
+</div>
+
+<!-- WINDOW 2 -->
+<div id="internetWindow" class="window">
+    <h3>Internet Settings</h3>
+    <p><b>Team:</b> <span id="teamName">Loading...</span></p>
+    <p><b>SSID:</b> <span id="ssidName">Loading...</span></p>
+    
+    <div class="form-group">
+        <label for="newPassword">New WiFi Password:</label>
+        <input type="password" id="newPassword" placeholder="Enter new password">
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm new password">
+    </div>
+    
+    <button class="btn-primary" onclick="changePassword()">💾 Change Password</button>
+    
+    <div id="statusMessage" class="status-message"></div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+    <button onclick="openNetwork()">⚙️ Settings</button>
+    <button class="switch-btn" onclick="switchToAttack()">⚔️ Switch to Attack</button>
+    <button onclick="viewScoreboard()">📊 Scoreboard</button>
+    <span id="timer">⏳ 01:00</span>
+    <span id="taskbarTeam">Loading...</span>
+    <button onclick="logout()">🚪 Logout</button>
+</div>
+<!-- DESKTOP ICONS FOR SECURITY TOOLS -->
+<div id="desktopIcons" style="position: fixed; top: 80px; left: 50px; display: flex; flex-direction: column; gap: 20px; z-index: 50;">
+    <div class="desktop-icon" style="display: flex; align-items: center; cursor: pointer;" onclick="alert('Opening Malwarebytes...')">
+        <img src="images/tools/malwarebytes.png" alt="Malwarebytes" style="width:50px;height:50px;margin-right:10px;">
+        <span style="color:white;font-weight:bold;">Malwarebytes</span>
+    </div>
+    <div class="desktop-icon" style="display: flex; align-items: center; cursor: pointer;" onclick="alert('Opening Windows Defender Firewall...')">
+        <img src="images/tools/defender.png" alt="Windows Defender Firewall" style="width:50px;height:50px;margin-right:10px;">
+        <span style="color:white;font-weight:bold;">Windows Defender Firewall</span>
+    </div>
+    <div class="desktop-icon" style="display: flex; align-items: center; cursor: pointer;" onclick="alert('Opening Nessus...')">
+        <img src="images/tools/nessus.png" alt="Nessus" style="width:50px;height:50px;margin-right:10px;">
+        <span style="color:white;font-weight:bold;">Nessus</span>
+    </div>
+    <div class="desktop-icon" style="display: flex; align-items: center; cursor: pointer;" onclick="alert('Opening Microsoft Baseline Security Analyzer...')">
+        <img src="images/tools/mbsa.png" alt="MBSA" style="width:50px;height:50px;margin-right:10px;">
+        <span style="color:white;font-weight:bold;">Microsoft Baseline Security Analyzer</span>
+    </div>
+</div>
+
+
+<script>
+/* ================== TEAM & SSID DISPLAY ================== */
+async function loadTeamInfo() {
+    const team = localStorage.getItem("team");
+    if (!team) {
+        window.location.href = "team.html";
+        return;
+    }
+
+    try {
+        const res = await fetch("gameStarter.json");
+        if (!res.ok) throw new Error("Failed to load game data");
+        const data = await res.json();
+
+        const teamName = team === "teamA" ? "Team A (Defense)" : "Team B (Defense)";
+        const teamColor = team === "teamA" ? "#3b82f6" : "#ef4444";
+        const ssid = data[team]?.network?.ssid || "Unknown";
+
+        // Display team and SSID info
+        document.getElementById("teamName").textContent = teamName;
+        document.getElementById("ssidName").textContent = ssid;
+        
+        // Display in taskbar
+        const bar = document.getElementById("taskbarTeam");
+        bar.textContent = teamName;
+        bar.style.color = teamColor;
+        
+        // Store team info globally for later use
+        window.currentTeam = team;
+        window.teamData = data;
+        
+    } catch (error) {
+        console.error("Error loading team info:", error);
+        document.getElementById("teamName").textContent = "Error";
+        document.getElementById("ssidName").textContent = "Error";
+        document.getElementById("taskbarTeam").textContent = "Error";
+    }
+}
+
+/* ================== WINDOW MANAGEMENT ================== */
+function openNetwork() {
+    console.log("Opening Network Settings...");
+    document.getElementById("networkWindow").classList.add("active");
+    document.getElementById("overlay").classList.add("active");
+}
+
+function openInternet() {
+    console.log("Opening Internet Settings...");
+    document.getElementById("networkWindow").classList.remove("active");
+    document.getElementById("internetWindow").classList.add("active");
+    document.getElementById("overlay").classList.add("active");
+}
+
+function closeAllWindows() {
+    console.log("Closing all windows...");
+    document.getElementById("networkWindow").classList.remove("active");
+    document.getElementById("internetWindow").classList.remove("active");
+    document.getElementById("overlay").classList.remove("active");
+    
+    // Clear any messages
+    const msgBox = document.getElementById("statusMessage");
+    msgBox.style.display = "none";
+    msgBox.className = "status-message";
+}
+
+/* ================== SWITCH TO ATTACK ================== */
+function switchToAttack() {
+    if (confirm("Are you sure you want to switch to Attack mode?")) {
+        localStorage.setItem("role","attack");
+        location.href = "attack.html";
+    }
+}
+
+/* ================== SCOREBOARD ================== */
+function viewScoreboard() {
+    location.href = "score.html";
+}
+
+/* ================== LOGOUT ================== */
+function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+        localStorage.clear();
+        location.href = "login.html";
+    }
+}
+
+/* ================== CHANGE PASSWORD ================== */
+function showMessage(msg,type) {
+    const box = document.getElementById("statusMessage");
+    box.textContent = msg;
+    box.className = `status-message ${type}`;
+    box.style.display = "block";
+    
+    // Hide message after 3 seconds
+    setTimeout(() => {
+        box.style.display = "none";
+        box.className = "status-message";
+    }, 3000);
+}
+
+async function changePassword() {
+
+    const p1 = document.getElementById("newPassword").value;
+    const p2 = document.getElementById("confirmPassword").value;
+
+    if (!p1 || !p2) {
+        showMessage("Please fill in all fields", "error");
+        return;
+    }
+
+    if (p1 !== p2) {
+        showMessage("Passwords do not match", "error");
+        return;
+    }
+
+    if (p1.length < 8) {
+        showMessage("Password must be at least 8 characters", "error");
+        return;
+    }
+
+    try {
+
+        const team = localStorage.getItem("team");
+
+        if (!team) {
+            showMessage("Team not found", "error");
+            return;
+        }
+
+        // Save password locally
+        localStorage.setItem(team + "_password", p1);
+
+        // Increase defense score
+        if (window.teamData && window.teamData[team]) {
+            window.teamData[team].score.defense =
+            (window.teamData[team].score.defense || 0) + 1;
+        }
+
+        showMessage("✅ Password updated successfully! +1 Defense point", "success");
+
+        document.getElementById("newPassword").value = "";
+        document.getElementById("confirmPassword").value = "";
+
+        setTimeout(() => {
+            closeAllWindows();
+        }, 1500);
+
+    } catch (error) {
+        console.error(error);
+        showMessage("❌ Error updating password", "error");
+    }
+}
+
+
+/* ================== TIMER & AUTO CONVERT TO ATTACK ================== */
+let defenseTime = 60;
+let timerInterval;
+
+function startDefenseTimer() {
+    const timerEl = document.getElementById("timer");
+    timerInterval = setInterval(() => {
+        defenseTime--;
+        const min = String(Math.floor(defenseTime / 60)).padStart(2,"0");
+        const sec = String(defenseTime % 60).padStart(2,"0");
+        timerEl.textContent = `⏳ ${min}:${sec}`;
+
+        if (defenseTime <= 0) {
+            clearInterval(timerInterval);
+            endDefensePhase();
+        }
+    }, 1000);
+}
+
+async function endDefensePhase() {
+    try {
+        const team = localStorage.getItem("team");
+        
+        if (team && window.teamData) {
+            // Increase defense score for completing phase
+            window.teamData[team].score.defense = (window.teamData[team].score.defense || 0) + 1;
+            window.teamData.phase = "ATTACK";
+            
+            console.log("Defense phase ended. Final data:", window.teamData);
+        }
+        
+        // Switch to attack mode
+        localStorage.setItem("role", "attack");
+        alert("⏰ Defense phase ended! Switching to attack mode...");
+        location.href = "attack.html";
+        
+    } catch (error) {
+        console.error("Error ending defense phase:", error);
+        location.href = "attack.html";
+    }
+}
+
+/* ================== KEYBOARD SHORTCUTS ================== */
+document.addEventListener("keydown", function(event) {
+    // Escape key closes all windows
+    if (event.key === "Escape") {
+        closeAllWindows();
+    }
+    
+    // Ctrl+Shift+S opens network settings
+    if (event.ctrlKey && event.shiftKey && event.key === "S") {
+        event.preventDefault();
+        openNetwork();
+    }
+});
+
+/* ================== INIT ================== */
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Defense mode initialized");
+    loadTeamInfo();
+    startDefenseTimer();
+    
+    // Add click handlers to prevent propagation
+    const windows = document.querySelectorAll(".window");
+    windows.forEach(window => {
+        window.addEventListener("click", function(e) {
+            e.stopPropagation();
+        });
+    });
+    
+    // Add click handler to overlay
+    document.getElementById("overlay").addEventListener("click", closeAllWindows);
+});
+</script>
+
+</body>
+</html>
